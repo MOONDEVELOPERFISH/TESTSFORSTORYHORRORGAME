@@ -1,0 +1,104 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Flappy Bird Game</title>
+    <style>
+        #gameArea {
+            position: relative;
+            height: 600px;
+            width: 800px;
+            border: 1px solid black;
+        }
+
+        #bird {
+            position: absolute;
+            width: 50px;
+            height: 50px;
+            background-image: url('https://i.imgur.com/DwfVpXI.png');
+            background-size: cover;
+        }
+
+        #pipeTop, #pipeBottom {
+            position: absolute;
+            width: 100px;
+            height: 200px;
+            background: green;
+        }
+
+        #score {
+            font-size: 24px;
+        }
+    </style>
+</head>
+<body>
+    <div id="gameArea">
+        <div id="bird"></div>
+        <div id="pipeTop"></div>
+        <div id="pipeBottom"></div>
+    </div>
+    <div id="score">Score: 0</div>
+    <script>
+        let bird = document.getElementById('bird');
+        let pipeTop = document.getElementById('pipeTop');
+        let pipeBottom = document.getElementById('pipeBottom');
+        let scoreDisplay = document.getElementById('score');
+
+        let birdY = 250;
+        let birdX = 375;
+        let pipeX = 800;
+        let pipeGap = 200;
+        let score = 0;
+
+        function gameLoop() {
+            birdY += 2; // gravity
+            pipeX -= 2; // pipe movement
+
+            if (pipeX < -100) { // pipe has left the screen
+                pipeX = 800;
+                pipeGap = Math.random() * 200 + 100; // random gap
+                score++;
+            }
+
+            // collision detection
+            if (birdY > 550 || birdY < 0 || (pipeX < birdX + 50 && pipeX + 100 > birdX && (birdY < pipeGap || birdY + 50 > pipeGap + 200))) {
+                alert('Game over! Your score was ' + score);
+                birdY = 250;
+                birdX = 375;
+                pipeX = 800;
+                score = 0;
+            }
+
+            // update positions
+            bird.style.top = birdY + 'px';
+            bird.style.left = birdX + 'px';
+            pipeTop.style.height = pipeGap + 'px';
+            pipeBottom.style.top = pipeGap + 200 + 'px';
+            pipeTop.style.left = pipeX + 'px';
+            pipeBottom.style.left = pipeX + 'px';
+
+            // update score
+            scoreDisplay.textContent = 'Score: ' + score;
+
+            requestAnimationFrame(gameLoop);
+        }
+
+        window.addEventListener('click', function() {
+            birdY -= 50; // bird jump
+        });
+
+        window.addEventListener('keydown', function(e) {
+            if (e.key === ' ') {
+                birdY -= 50; // bird jump
+            }
+            if (e.key === 'ArrowRight') {
+                birdX += 20; // move right
+            }
+            if (e.key === 'ArrowLeft') {
+                birdX -= 20; // move left
+            }
+        });
+
+        gameLoop();
+    </script>
+</body>
+</html>
